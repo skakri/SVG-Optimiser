@@ -315,10 +315,13 @@ class CleanSVG:
 
             del self.root.nsmap[namespace]
 
-    def extract_styles(self):
+    def extract_styles(self, strip=None):
         """ Remove style attributes and values of the style attribute and put in <style> element as CSS. """
 
         for element in self.tree.iter():
+            if strip is None:
+                strip = []
+
             style_list = []
 
             if "style" in list(element.keys()):
@@ -332,7 +335,7 @@ class CleanSVG:
 
             if len(style_list) > 0:
                 # Ensure styling is in the form: (key, value)
-                style_list = [style for style in style_list if len(style) == 2]
+                style_list = [style for style in style_list if len(style) == 2 and style[0] not in strip]
 
                 # Remove pointless styles, e.g. opacity = 1
                 for default_style in default_styles & set(style_list):
